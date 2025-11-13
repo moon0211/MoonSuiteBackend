@@ -9,7 +9,8 @@ const menuData = [
         "sort": 1,
         "isShow": true,
         "component": "views/MainDashboard/index.vue",
-        "isExternal": false
+        "isExternal": false,
+        "fullScreen": false
     },
     {
         "id": "menu_1002",
@@ -19,7 +20,8 @@ const menuData = [
         "icon": "application",
         "parentId": null,
         "sort": 2,
-        "isShow": true
+        "isShow": true,
+        "fullScreen": false
     },
     {
         "id": "menu_1003",
@@ -29,7 +31,8 @@ const menuData = [
         "icon": "shield-error",
         "parentId": "menu_1002",
         "sort": 1,
-        "isShow": true
+        "isShow": true,
+        "fullScreen": false
     },
     {
         "id": "menu_1004",
@@ -41,7 +44,8 @@ const menuData = [
         "sort": 1,
         "isShow": true,
         "component": "views/permission/permissionlist/index.vue",
-        "isExternal": false
+        "isExternal": false,
+        "fullScreen": false
     }
     ,
     {
@@ -54,7 +58,22 @@ const menuData = [
         "sort": 3,
         "isShow": true,
         "component": "views/menu/index.vue",
-        "isExternal": false
+        "isExternal": false,
+        "fullScreen": false
+    }
+    ,
+    {
+        "id": "menu_1006",
+        "type": "menuItem",
+        "title": "登录",
+        "value": "/login",
+        "icon": "shield-error",
+        "parentId": null,
+        "sort": 3,
+        "isShow": true,
+        "component": "views/login/index.vue",
+        "isExternal": false,
+        "fullScreen": true
     }
 ]
 
@@ -260,6 +279,7 @@ exports.updateMenu = (req, res) => {
 
         targetMenu.title = formData.title;
         targetMenu.icon = formData.icon;
+        targetMenu.fullScreen = formData.fullScreen;
         targetMenu.path = formData.path;
         targetMenu.component = formData.component;
         targetMenu.isShow = formData.isShow;
