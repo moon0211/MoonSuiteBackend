@@ -70,8 +70,8 @@ const menuData = [
         "icon": "shield-error",
         "parentId": null,
         "sort": 3,
-        "isShow": true,
-        "component": "views/login/index.vue",
+        "isShow": false,
+        "component": "views/auth/index.vue",
         "isExternal": false,
         "fullScreen": true
     }
