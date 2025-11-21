@@ -2,10 +2,13 @@ const express = require('express');
 const router = express.Router();
 const menuRouter = require('./menuRouter');
 const authRouter = require('./authRouter');
+const { authMiddleware } = require('../middleware/authMiddleware'); // 使用require
+
+// 应用认证中间件到所有路由
+router.use(authMiddleware);
 
 // 挂载子路由
-router.use(menuRouter); // 菜单相关接口（完整路径：/api/menu）
-router.use(authRouter); // 登录相关接口（完整路径：/api/login）
+router.use(menuRouter);
+router.use(authRouter);
 
 module.exports = router;
-    

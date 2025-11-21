@@ -99,7 +99,6 @@ exports.register = async (req, res) => {
 
         // 保存用户到数据存储 (实际项目中是保存到数据库)
         userData.push(newUser);
-        console.log('userData: ', userData);
         // 返回成功信息和用户数据 (不包含密码哈希)
         return res.status(201).json({
             code: 201,
@@ -140,10 +139,17 @@ exports.refreshToken = (req, res) => {
             return res.status(401).json({ code: 401, message: '用户不存在' });
         }
 
-        // 生成新的访问令牌
+        // 生成访问令牌和刷新令牌
         const newAccessToken = generateAccessToken(user);
+        const newRefreshToken = generateRefreshToken(user);
 
-        return res.json({ accessToken: newAccessToken });
+        return res.json({
+            code: 200,
+            message: '刷新令牌成功',
+            data: {
+                accessToken: newAccessToken, refreshToken: newRefreshToken
+            }
+        });
     } catch (error) {
         console.error('刷新令牌错误:', error);
         return res.status(401).json({ code: 401, message: '刷新令牌无效或已过期' });
