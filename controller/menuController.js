@@ -25,25 +25,28 @@ const menuData = [
     },
     {
         "id": "menu_1003",
-        "type": "submenu",
+        "type": "menuItem",
         "title": "权限管理",
-        "value": "权限管理",
+        "value": "/permissionList",
         "icon": "shield-error",
         "parentId": "menu_1002",
         "sort": 1,
         "isShow": true,
+        "component": "views/permission/permissionlist/index.vue",
+        "isExternal": false,
         "fullScreen": false
-    },
+    }
+    ,
     {
         "id": "menu_1004",
         "type": "menuItem",
-        "title": "权限管理列表",
-        "value": "/permissionList",
+        "title": "角色管理",
+        "value": "/roleList",
         "icon": "shield-error",
-        "parentId": "menu_1003",
+        "parentId": "menu_1002",
         "sort": 1,
         "isShow": true,
-        "component": "views/permission/permissionlist/index.vue",
+        "component": "views/role/roleList/index.vue",
         "isExternal": false,
         "fullScreen": false
     }
@@ -97,7 +100,7 @@ const buildNested = (parentId = null, filterShow) => {
 
 // 递归过滤嵌套菜单的函数
 const filterNestedMenu = (menuItems, queryData) => {
-    const { isShow, parentId, status, title, type, value } = queryData;
+    const { isShow, parentId, status, title, type, value, fullScreen } = queryData;
 
     // 先处理所有子菜单，再判断当前菜单
     return menuItems.reduce((result, menu) => {
@@ -114,7 +117,8 @@ const filterNestedMenu = (menuItems, queryData) => {
             (!title || menu.title.includes(title)) &&
             (!type || menu.type === type) &&
             (!value || menu.value.toLowerCase().includes(value.toLowerCase())) &&
-            (isShow === undefined || isShow === "" || menu.isShow === isShow)
+            (isShow === undefined || isShow === "" || menu.isShow === isShow) &&
+            (fullScreen === undefined || fullScreen === "" || menu.fullScreen === fullScreen)
         );
 
         // 对于有子菜单的菜单，如果子菜单有匹配项，即使自身不匹配也要保留

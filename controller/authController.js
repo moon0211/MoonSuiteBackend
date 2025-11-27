@@ -8,12 +8,13 @@ const { userData } = require('./userController'); // 导入用户数据
 // 密钥配置 - 实际项目中应放在环境变量中
 const JWT_SECRET = 'moondailyhappy';
 const ACCESS_TOKEN_EXPIRY = '15m'; // 访问令牌15分钟过期
+const RE_ACCESS_TOKEN_EXPIRY = '1d'; // 访问令牌1天过期
 const REFRESH_TOKEN_EXPIRY = '7d'; // 刷新令牌7天过期
 
 // 登录接口
 exports.login = async (req, res) => {
     try {
-        const { username, password } = req.body;
+        const { username, password, remember } = req.body;
 
         // 查找用户
         const user = userData.find(u => u.username === username);
@@ -26,9 +27,9 @@ exports.login = async (req, res) => {
         if (!isPasswordValid) {
             return res.status(401).json({ code: 401, message: '用户名或密码错误' });
         }
+        const accessToken = generateAccessToken(user, remember);
 
         // 生成访问令牌和刷新令牌
-        const accessToken = generateAccessToken(user);
         const refreshToken = generateRefreshToken(user);
 
         // 更新最后登录时间
@@ -141,13 +142,12 @@ exports.refreshToken = (req, res) => {
 
         // 生成访问令牌和刷新令牌
         const newAccessToken = generateAccessToken(user);
-        const newRefreshToken = generateRefreshToken(user);
 
         return res.json({
             code: 200,
             message: '刷新令牌成功',
             data: {
-                accessToken: newAccessToken, refreshToken: newRefreshToken
+                accessToken: newAccessToken,
             }
         });
     } catch (error) {
@@ -157,11 +157,11 @@ exports.refreshToken = (req, res) => {
 };
 
 // 生成访问令牌
-function generateAccessToken(user) {
+function generateAccessToken(user, re) {
     return jwt.sign(
         { id: user.id, username: user.username, role: user.role },
         JWT_SECRET,
-        { expiresIn: ACCESS_TOKEN_EXPIRY }
+        { expiresIn: re ? RE_ACCESS_TOKEN_EXPIRY : ACCESS_TOKEN_EXPIRY }
     );
 }
 
