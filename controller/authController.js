@@ -132,7 +132,7 @@ exports.refreshToken = (req, res) => {
 
     try {
         // 验证刷新令牌
-        const decoded = jwt.verify(refreshToken, JWT_SECRET);
+        const decoded = jwt.verify(refreshToken, JWT_SECRET, { ignoreExpiration: false });
 
         // 查找用户
         const user = userData.find(u => u.id === decoded.id);
@@ -151,7 +151,7 @@ exports.refreshToken = (req, res) => {
             }
         });
     } catch (error) {
-        console.error('刷新令牌错误:', error);
+        console.error('刷新令牌无效或已过期:', error);
         return res.status(401).json({ code: 401, message: '刷新令牌无效或已过期' });
     }
 };

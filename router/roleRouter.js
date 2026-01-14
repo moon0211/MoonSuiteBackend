@@ -8,5 +8,6 @@ router.post('/role', roleController.addRole);
 router.put('/role/:id', roleController.updateRole); 
 router.delete('/role/:id', roleController.deleteRole); 
 router.patch('/role/:id/status', roleController.updateRoleStatus); 
+router.patch('/role/:id/permissions', roleController.assignPermissions); 
 module.exports = router;
     
