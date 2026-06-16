@@ -59,7 +59,7 @@ exports.login = async (req, res) => {
 // 注册接口
 exports.register = async (req, res) => {
     try {
-        const { username, password, role = 'user' } = req.body;
+        const { username, password, role = 'GUEST' } = req.body;
 
         // 基本数据验证
         if (!username || !password) {
@@ -126,7 +126,7 @@ exports.register = async (req, res) => {
 exports.refreshToken = (req, res) => {
     const { refreshToken } = req.body;
 
-    if (!refreshToken) {
+    if (!refreshToken || refreshToken.trim() === '') {
         return res.status(401).json({ code: 401, message: '刷新令牌不能为空' });
     }
 
@@ -151,8 +151,13 @@ exports.refreshToken = (req, res) => {
             }
         });
     } catch (error) {
-        console.error('刷新令牌无效或已过期:', error);
-        return res.status(401).json({ code: 401, message: '刷新令牌无效或已过期' });
+        if (error.name === 'TokenExpiredError') {
+            console.error('刷新令牌已过期:', error);
+            return res.status(401).json({ code: 401, message: '刷新令牌已过期' })
+        } else {
+            console.error('刷新令牌格式非法:', error);
+            return res.status(401).json({ code: 401, message: '刷新令牌格式非法' })
+        }
     }
 };
 

@@ -55,28 +55,29 @@ const filterNestedMenu = (menuItems, queryData) => {
 // 获取权限列表
 exports.getPermissionsData = (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
-  //先拿到菜单数据，确保新增了菜单也会同步数据，得到一个id数组作为比对，
-  if (permissionsData.length === 0) {
-    let queryData = {
-      type: 'menuItem'
-    }
-    let nestedData = menuData;
-    let data = filterNestedMenu(nestedData, queryData);
-    permissionsData = data.map(item => {
-      return {
-        name: item.title,
-        encode: item.id,
-        id: item.id,
-        parentId: null,
-        interfaceUrl: null,
-        children: [
 
-        ]
-      }
-    })
-  }
+  // 先拿到菜单数据，确保新增了菜单也会同步数据，得到一个id数组作为比对
+  let queryData = {
+    type: 'menuItem'
+  };
+  let nestedData = menuData;
+  let data = filterNestedMenu(nestedData, queryData);
 
-  return res.json({ code: 200, data: permissionsData });;
+  permissionsData = data.map(item => {
+    const originalItem = permissionsData.find(perm => perm.id === item.id);
+    const originalChildren = originalItem ? originalItem.children : [];
+
+    return {
+      name: item.title,
+      encode: item.id,
+      id: item.id,
+      parentId: null,
+      interfaceUrl: null,
+      children: originalChildren
+    };
+  });
+
+  return res.json({ code: 200, data: permissionsData });
 };
 
 function checkDuplicateInParent(parentNode, encode, name, options = {}) {
@@ -113,7 +114,7 @@ exports.addPermission = (req, res) => {
     if (!parentNode) {
       return res.status(400).json({ code: 400, message: '根节点不存在' });
     }
-
+    // 检查权限名称or编码是否已存在
     const duplicateCheck = checkDuplicateInParent(parentNode, encode, name);
     if (duplicateCheck.isDuplicate) {
       return res.status(400).json({
@@ -189,18 +190,21 @@ exports.addPermission = (req, res) => {
     });
   }
 };
+
 exports.updatePermission = (req, res) => {
+
   const id = req.params.id;
-  const parentId = req.params.parentId;
-  const { encode, name } = req.body;
+  const { encode, name, interfaceUrl } = req.query;
+
 
   if (!encode || !name) {
     return res.status(200).json({ code: 400, success: false, message: '参数不能为空' });
 
   }
-  let target = findDataById(permissionsData, id, {}, parentId);
+  let target = findDataById(permissionsData, id);
   target.name = name;
   target.encode = encode;
+  target.interfaceUrl = interfaceUrl;
 
   return res.json({ code: 200, success: true, data: permissionsData });;
 };
@@ -303,4 +307,6 @@ function findDataById(arr, targetId, options = {}) {
 
   return null;
 }
-
+//新增权限的时候同步角色
+function syncRolesOnPermAdd() {
+}

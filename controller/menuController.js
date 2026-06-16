@@ -8,7 +8,7 @@ const menuData = [
         "parentId": null,
         "sort": 1,
         "isShow": true,
-        "component": "views/MainDashboard/index.vue",
+        "component": "views/MainDashboard/index",
         "isExternal": false,
         "fullScreen": false
     },
@@ -32,7 +32,7 @@ const menuData = [
         "parentId": "menu_1002",
         "sort": 1,
         "isShow": true,
-        "component": "views/permission/permissionlist/index.vue",
+        "component": "views/permission/permissionlist/index",
         "isExternal": false,
         "fullScreen": false
     }
@@ -46,7 +46,7 @@ const menuData = [
         "parentId": "menu_1002",
         "sort": 1,
         "isShow": true,
-        "component": "views/role/roleList/index.vue",
+        "component": "views/role/roleList/index",
         "isExternal": false,
         "fullScreen": false
     }
@@ -60,7 +60,7 @@ const menuData = [
         "parentId": null,
         "sort": 3,
         "isShow": true,
-        "component": "views/menu/index.vue",
+        "component": "views/menu/index",
         "isExternal": false,
         "fullScreen": false
     }
@@ -74,7 +74,7 @@ const menuData = [
         "parentId": null,
         "sort": 3,
         "isShow": false,
-        "component": "views/auth/index.vue",
+        "component": "views/auth/index",
         "isExternal": false,
         "fullScreen": true
     }

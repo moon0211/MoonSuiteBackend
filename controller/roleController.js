@@ -109,9 +109,9 @@ exports.getRolesData = (req, res) => {
     try {
         const createdAt = req.query['createdAt[]'] || req.query.createdAt;
         let { encode, name, permissions, status } = req.query;
-
+        //给每个角色新增字段 correlation，标记有没有用户在用这个角色
         let rolesWithCorrelation = rolesData.map(role => {
-            const hasCorrelation = userData.some(user => user.roleId === role.id);
+            const hasCorrelation = userData.some(user => user.roles === role.id);
             return {
                 ...role,
                 correlation: hasCorrelation
@@ -265,7 +265,7 @@ exports.deleteRole = (req, res) => {
             return res.status(200).json({ code: 404, message: '角色不存在' });
         }
         let role = rolesData[roleIndex]
-        const hasAssociatedUsers = userData.some(user => user.roleId.includes(id));
+        const hasAssociatedUsers = userData.some(user => user.roles.includes(id));
         if (hasAssociatedUsers) {
             return res.status(200).json({ code: 400, message: '角色关联用户，无法删除' });
         }
@@ -304,11 +304,12 @@ exports.updateRoleStatus = (req, res) => {
 
         return res.status(200).json({
             code: 200,
+            success: true,
             message: status == 'active' ? '角色启用成功' : '角色禁用成功',
             data: role
         });
     } catch (error) {
-        return res.status(500).json({ code: 500, message: '服务器内部错误，修改状态失败', data: [] });
+        return res.status(500).json({ code: 500, success: false, message: '服务器内部错误，修改状态失败', data: [] });
     }
 }
 exports.assignPermissions = (req, res) => {
@@ -322,24 +323,26 @@ exports.assignPermissions = (req, res) => {
         if (roleIndex === -1) {
             return res.status(200).json({ code: 404, message: '角色不存在' });
         }
-        let role = rolesData[roleIndex]
+        const role = rolesData[roleIndex]
         if (role.builtIn) {
             return res.status(200).json({ code: 403, message: '内置角色不可修改' });
         }
-        const updatedRole = {
+        rolesData[roleIndex] = {
             ...role,
             permissions: permissions,
             updatedAt: new Date().toISOString(),
             updatedBy: updatedBy
         };
-        role = updatedRole;
+        console.log('rolesData: ', rolesData);
         return res.status(200).json({
             code: 200,
+            success: true,
             message: '分配角色权限成功',
-            data: role
+            data: rolesData[roleIndex]
         });
     } catch (error) {
-        return res.status(500).json({ code: 500, message: '服务器内部错误，权限分配失败', data: [] });
+
+        return res.status(500).json({ code: 500, success: false, message: '服务器内部错误，权限分配失败', data: [] });
 
     }
 }
